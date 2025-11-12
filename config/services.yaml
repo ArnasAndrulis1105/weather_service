@@ -14,12 +14,18 @@ services:
         autowire: true
         autoconfigure: true
 
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
 
+    # Optional explicit args (singular)
     App\Service\MeteoLtClient:
         arguments:
             $baseUrl: '%env(LHMT_BASE_URL)%'
             $timeout: '%env(int:LHMT_TIMEOUT)%'
-
 
     App\Service\RecommendationService: ~
 
