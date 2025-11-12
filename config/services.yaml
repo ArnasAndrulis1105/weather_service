@@ -21,7 +21,6 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # Optional explicit args (singular)
     App\Service\MeteoLtClient:
         arguments:
             $baseUrl: '%env(LHMT_BASE_URL)%'

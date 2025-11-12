@@ -27,7 +27,7 @@ class Product
 
 
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
-    private string $price; // keep as string for decimal
+    private string $price;
 
 
     #[ORM\Column(type: 'json')]

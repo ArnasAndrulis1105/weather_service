@@ -44,14 +44,13 @@ class ProductRepository extends ServiceEntityRepository
     {
         $conn = $this->getEntityManager()->getConnection();
 
-        // Postgres JSONB containment: does weather_tags contain "rain" ?
         $sql = 'SELECT sku, name, price, weather_tags
             FROM products
             WHERE weather_tags::jsonb @> :needle::jsonb
             ORDER BY price ASC
             LIMIT :lim';
 
-        $needle = json_encode([$tag]); // e.g. ["rain"]
+        $needle = json_encode([$tag]);
         return $conn->prepare($sql)
             ->executeQuery(['needle' => $needle, 'lim' => $limit])
             ->fetchAllAssociative();
