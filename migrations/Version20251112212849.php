@@ -26,7 +26,5 @@ final class Version20251112212849 extends AbstractMigration
     public function down(Schema $schema): void
     {
         $this->addSql('DROP INDEX IF EXISTS idx_products_weather_tags');
-        // revert at your own risk:
-        // $this->addSql('ALTER TABLE products ALTER COLUMN weather_tags TYPE JSON USING weather_tags::json');
     }
 }
