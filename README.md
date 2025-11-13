@@ -1,6 +1,6 @@
 Weather Recommendations API (Symfony + PostgreSQL + Docker)
 
-A small Symfony service that recommends products for the next 3 days based on the LHMT (Meteo.lt) weather forecast for a given Lithuanian city.
+A small Symfony service that recommends products for the next 3 days based on the LHMT (Meteo.lt) weather forecast for a given city(This is only the backend API service).
 
 Features
 
