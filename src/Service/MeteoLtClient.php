@@ -5,6 +5,8 @@ namespace App\Service;
 use Psr\Cache\CacheItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use App\Util\CacheKey;
+use Symfony\Contracts\Cache\ItemInterface;
 
 final class MeteoLtClient
 {
@@ -18,13 +20,11 @@ final class MeteoLtClient
 
     public function resolvePlaceCode(string $city): string
     {
-        $places = $this->cache->get('lhmt:places', function (CacheItemInterface $item) {
-            $item->expiresAfter(3600);
+        $key = CacheKey::make('lhmt', 'places');
+        $places = $this->cache->get($key, function (ItemInterface $item) {
+            $item->expiresAfter((int)($_ENV['CACHE_TTL_SECONDS'] ?? 300));
             $resp = $this->httpClient->request('GET', rtrim($this->baseUrl, '/').'/places', [
-                'headers' => [
-                    'User-Agent' => 'WeatherReco/1.0 (+https://example.local)',
-                    'Accept' => 'application/json',
-                ],
+                'headers' => ['User-Agent' => 'WeatherReco/1.0', 'Accept' => 'application/json'],
                 'timeout' => $this->timeout,
             ]);
             return $resp->toArray();

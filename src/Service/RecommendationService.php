@@ -15,6 +15,25 @@ final class RecommendationService
         private readonly EntityManagerInterface $em
     ) {}
 
+    /**
+     * Return up to $limit products suitable for a given weather tag (e.g. 'rain', 'sunny').
+     * Shape is exactly what the controller expects.
+     *
+     * @return array<int, array{sku:string,name:string,price:float}>
+     */
+    public function pickForTag(string $tag, int $limit = 2): array
+    {
+        $rows = $this->products->findForWeather($tag, $limit);
+
+        // Normalize types/shape
+        return array_map(static function (array $r): array {
+            return [
+                'sku'   => (string) $r['sku'],
+                'name'  => (string) $r['name'],
+                'price' => (float)  $r['price'],
+            ];
+        }, $rows);
+    }
 
     public function recommendForBuckets(array $buckets): array
     {

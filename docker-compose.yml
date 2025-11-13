@@ -1,0 +1,56 @@
+version: "3.9"
+
+
+services:
+    db:
+        image: postgres:17-alpine
+        container_name: weatherreco_db
+        environment:
+            POSTGRES_DB: weather_reco
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: passw
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+
+
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                PHP_VERSION: 8.4
+        container_name: weatherreco_app
+        environment:
+            APP_ENV: dev
+            APP_DEBUG: 1
+            DATABASE_URL: "postgresql://postgres:passw@db:5432/weather_reco?serverVersion=17&charset=utf8"
+            LHMT_BASE_URL: https://api.meteo.lt/v1
+            LHMT_TIMEOUT: 8
+            CACHE_TTL_SECONDS: 300
+        volumes:
+            - ./:/var/www/html:cached
+        depends_on:
+            db:
+                condition: service_healthy
+
+
+
+    web:
+        image: nginx:alpine
+        container_name: weatherreco_web
+        ports:
+            - "8000:80"
+        volumes:
+            - ./:/var/www/html:ro
+            - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+        depends_on:
+            - app
+
+
+volumes:
+    pgdata:
